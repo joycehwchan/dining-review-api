@@ -4,6 +4,9 @@ import com.joycehwchan.diningreviews.model.Restaurant;
 import com.joycehwchan.diningreviews.repository.RestaurantRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 
 @RestController
@@ -18,6 +21,15 @@ public class RestaurantController {
     @GetMapping
     public Iterable<Restaurant> getAllRestaurants() {
         return restaurantRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Restaurant getRestaurant(@PathVariable Long id) {
+        Optional<Restaurant> restaurant = restaurantRepository.findById(id);
+        if (restaurant.isPresent()) {
+            return restaurant.get();
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
