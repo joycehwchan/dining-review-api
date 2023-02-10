@@ -16,10 +16,10 @@ public class Review {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     private String submittedBy;
-    private long restaurantId;
+    private Long restaurantId;
     private String comment;
 
     private Integer peanutScore;
