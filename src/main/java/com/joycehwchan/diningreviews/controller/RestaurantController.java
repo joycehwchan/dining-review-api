@@ -7,6 +7,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -36,8 +37,19 @@ public class RestaurantController {
     }
 
     @GetMapping("/search")
-    public Iterable<Restaurant> searchRestaurant(@RequestParam String zipCode) {
+    public Iterable<Restaurant> searchRestaurant(@RequestParam String zipCode, @RequestParam String allergy) {
         validateZipCode(zipCode);
+
+        Iterable<Restaurant> restaurants = Collections.EMPTY_LIST;
+        if (allergy.equalsIgnoreCase("peanut")) {
+            restaurants = restaurantRepository.findByZipCodeAndPeanutScoreNotNullOrderByPeanutScore(zipCode);
+        } else if (allergy.equalsIgnoreCase("dairy")) {
+            restaurants = restaurantRepository.findByZipCodeAndDairyScoreNotNullOrderByDairyScore(zipCode);
+        } else if (allergy.equalsIgnoreCase("egg")) {
+            restaurants = restaurantRepository.findByZipCodeAndEggScoreNotNullOrderByEggScore(zipCode);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
 
         return restaurantRepository.findByZipCode(zipCode);
     }
