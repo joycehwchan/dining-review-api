@@ -19,6 +19,21 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/{username}")
+    public User getUser(@PathVariable String username) {
+        validateUsername(username);
+
+        Optional<User> optionalExistingUser = userRepository.findByUsername(username);
+        if (!optionalExistingUser.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        User existingUser = optionalExistingUser.get();
+        existingUser.setId(null);
+
+        return existingUser;
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void addUser(@RequestBody User user) {
@@ -27,13 +42,18 @@ public class UserController {
     }
 
     private void validateUser (User user) {
-        if (ObjectUtils.isEmpty(user.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        validateUsername(user.getUsername());
 
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
     }
+
+    private void validateUsername (String username) {
+        if (ObjectUtils.isEmpty(username)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
+
