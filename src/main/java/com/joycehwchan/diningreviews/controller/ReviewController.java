@@ -2,13 +2,16 @@ package com.joycehwchan.diningreviews.controller;
 
 import com.joycehwchan.diningreviews.model.Review;
 import com.joycehwchan.diningreviews.model.ReviewStatus;
+import com.joycehwchan.diningreviews.model.User;
 import com.joycehwchan.diningreviews.repository.RestaurantRepository;
 import com.joycehwchan.diningreviews.repository.ReviewRepository;
 import com.joycehwchan.diningreviews.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reviews")
@@ -39,6 +42,27 @@ public class ReviewController {
     }
 
     private void validateReview(Review review) {
-        // validations...
+        if (ObjectUtils.isEmpty(review.getSubmittedBy())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ObjectUtils.isEmpty(review.getRestaurantId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ObjectUtils.isEmpty(review.getComment())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (ObjectUtils.isEmpty(review.getEggScore()) &&
+                ObjectUtils.isEmpty(review.getDiaryScore()) &&
+                ObjectUtils.isEmpty(review.getPeanutScore())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+      Optional<User> optionalUser = userRepository.findByUsername(review.getSubmittedBy());
+        if (optionalUser.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 }
