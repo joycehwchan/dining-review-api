@@ -32,6 +32,6 @@ public class Restaurant {
     private Integer overallScore;
     private Integer peanutScore;
     private Integer eggScore;
-    private Integer diaryScore;
+    private Integer dairyScore;
 
 }

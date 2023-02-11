@@ -40,6 +40,10 @@ public class RestaurantController {
     public Iterable<Restaurant> searchRestaurant(@RequestParam String zipCode, @RequestParam String allergy) {
         validateZipCode(zipCode);
 
+        if (allergy.isEmpty()) {
+            return restaurantRepository.findByZipCode(zipCode);
+        }
+
         Iterable<Restaurant> restaurants = Collections.EMPTY_LIST;
         if (allergy.equalsIgnoreCase("peanut")) {
             restaurants = restaurantRepository.findByZipCodeAndPeanutScoreNotNullOrderByPeanutScore(zipCode);
@@ -51,7 +55,7 @@ public class RestaurantController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        return restaurantRepository.findByZipCode(zipCode);
+        return restaurants;
     }
 
     @PostMapping
