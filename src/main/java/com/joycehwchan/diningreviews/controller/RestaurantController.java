@@ -35,6 +35,13 @@ public class RestaurantController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/search")
+    public Iterable<Restaurant> searchRestaurant(@RequestParam String zipCode) {
+        validateZipCode(zipCode);
+
+        return restaurantRepository.findByZipCode(zipCode);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Restaurant addRestaurant(@RequestBody Restaurant restaurant) {
