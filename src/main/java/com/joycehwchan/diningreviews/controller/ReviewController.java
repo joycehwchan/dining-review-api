@@ -1,5 +1,6 @@
 package com.joycehwchan.diningreviews.controller;
 
+import com.joycehwchan.diningreviews.model.Restaurant;
 import com.joycehwchan.diningreviews.model.Review;
 import com.joycehwchan.diningreviews.model.ReviewStatus;
 import com.joycehwchan.diningreviews.model.User;
@@ -36,11 +37,6 @@ public class ReviewController {
         reviewRepository.save(review);
     }
 
-    @GetMapping
-    public Iterable<Review> getAllReviews() {
-        return reviewRepository.findAll();
-    }
-
     private void validateReview(Review review) {
         if (ObjectUtils.isEmpty(review.getSubmittedBy())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -60,7 +56,12 @@ public class ReviewController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-      Optional<User> optionalUser = userRepository.findByUsername(review.getSubmittedBy());
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(review.getRestaurantId());
+        if (optionalRestaurant.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        Optional<User> optionalUser = userRepository.findByUsername(review.getSubmittedBy());
         if (optionalUser.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
