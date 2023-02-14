@@ -1,6 +1,5 @@
 package com.joycehwchan.diningreviews.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -14,7 +13,6 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class Restaurant {
-
     @Id
     @GeneratedValue
     private Long id;
@@ -33,5 +31,4 @@ public class Restaurant {
     private Integer peanutScore;
     private Integer eggScore;
     private Integer dairyScore;
-
 }
